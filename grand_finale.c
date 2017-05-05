@@ -22,6 +22,8 @@ const int LEFT = 1;
 int black = 400;
 int reflect=1;
 int test=0;
+int LastEncode = 0;
+int encode = 0;
 
 /*--------------------------------------------------------------------------*/
 /* Definitions                                                              */
@@ -54,6 +56,7 @@ void ecrobot_device_initialize(void)
 	ecrobot_init_nxtcolorsensor(NXT_PORT_S1, NXT_LIGHTSENSOR_RED); // initialize a sensor
 	ecrobot_set_nxtcolorsensor(NXT_PORT_S1, NXT_LIGHTSENSOR_RED);
 	ecrobot_init_sonar_sensor(NXT_PORT_S2);
+	nxt_motor_set_count(NXT_PORT_A, 0);
 }
 
 void driveRightMotor(int speed)
@@ -173,6 +176,16 @@ TASK(LightSensorTask)
 	}*/
 	
 	ReleaseResource(DC);
+	
+	encode = nxt_motor_get_count(NXT_PORT_A);
+	
+	if (ecrobot_get_sonar_sensor(NXT_PORT_S2)<15 && encode > 500)
+	{
+		LastEncode = encode;
+		encode = 0;
+		nxt_motor_set_count(NXT_PORT_A, 0);
+	}
+	
 		
 	TerminateTask();
 }
@@ -195,11 +208,11 @@ TASK(DisplayTask)
    display_int(reflect,0);
    
    display_goto_xy(0, 4);
-   display_string("PreDir: ");
-   display_int(dc.prevDir,0);
+   display_string("ENCODE: ");
+   display_int(encode,0);
    display_goto_xy(0, 5);
-   display_string("dir: ");
-   display_int(dc.dir,0);
+   display_string("LAP: ");
+   display_int(LastEncode,0);
    display_update(); 
 	
 	
