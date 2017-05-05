@@ -1,0 +1,134 @@
+#include "implementation.oil"
+
+CPU ATMEL_AT91SAM7S256
+{
+  OS LEJOS_OSEK
+  {
+    STATUS = EXTENDED;
+    STARTUPHOOK = FALSE;
+    ERRORHOOK = FALSE;
+    SHUTDOWNHOOK = FALSE;
+    PRETASKHOOK = FALSE;
+    POSTTASKHOOK = FALSE;
+    USEGETSERVICEID = FALSE;
+    USEPARAMETERACCESS = FALSE;
+    USERESSCHEDULER = FALSE;
+  };
+
+  /* Definition of application mode */
+  APPMODE appmode1{};
+  
+    RESOURCE DC
+	{
+  		RESOURCEPROPERTY = STANDARD;
+  	};
+
+	TASK MotorControlTask
+	{
+		AUTOSTART = FALSE;
+		PRIORITY = 1; /* Smaller value means lower priority */
+		ACTIVATION = 1;
+		SCHEDULE = FULL;
+		STACKSIZE = 512; /* Stack size */
+		RESOURCE = DC;
+	};
+	
+	
+	ALARM MotorControlTaskAlarm
+	{
+		COUNTER = SysTimerCnt;
+		ACTION = ACTIVATETASK
+		{
+			TASK = MotorControlTask;
+		};
+		AUTOSTART = TRUE
+		{
+			ALARMTIME = 1;
+			CYCLETIME = 15;
+			APPMODE = appmode1;
+		};
+	};
+	
+	TASK LightSensorTask
+	{
+		AUTOSTART = FALSE;
+		PRIORITY = 1; /* Smaller value means lower priority */
+		ACTIVATION = 1;
+		SCHEDULE = FULL;
+		STACKSIZE = 512; /* Stack size */
+		RESOURCE = DC;
+	};
+	
+	ALARM LightSensorTaskAlarm
+	{
+		COUNTER = SysTimerCnt;
+		ACTION = ACTIVATETASK
+		{
+			TASK = LightSensorTask;
+		};
+		AUTOSTART = TRUE
+		{
+			ALARMTIME = 1;
+			CYCLETIME = 10;
+			APPMODE = appmode1;
+		};
+	};
+	
+	TASK DisplayTask
+	{
+		AUTOSTART = FALSE;
+		PRIORITY = 1; /* Smaller value means lower priority */
+		ACTIVATION = 1;
+		SCHEDULE = FULL;
+		STACKSIZE = 512; /* Stack size */
+		RESOURCE = DC;
+	};
+	
+	ALARM DisplayTaskAlarm
+	{
+		COUNTER = SysTimerCnt;
+		ACTION = ACTIVATETASK
+		{
+			TASK = DisplayTaskAlarm;
+		};
+		AUTOSTART = TRUE
+		{
+			ALARMTIME = 1;
+			CYCLETIME = 20;
+			APPMODE = appmode1;
+		};
+	};
+	
+	COUNTER SysTimerCnt
+	{
+		MINCYCLE = 1;
+		MAXALLOWEDVALUE = 10000;
+		TICKSPERBASE = 1; /* One tick is equal to 1msec */
+	};
+  
+  	TASK ButtonPressTask
+	{
+		AUTOSTART = FALSE;
+		PRIORITY = 1; /* Smaller value means lower priority */
+		ACTIVATION = 1;
+		SCHEDULE = FULL;
+		STACKSIZE = 512; /* Stack size */
+		RESOURCE = DC;
+	};
+	
+	ALARM ButtonPressTaskAlarm
+	{
+		COUNTER = SysTimerCnt;
+		ACTION = ACTIVATETASK
+		{
+			TASK = ButtonPressTask;
+		};
+		AUTOSTART = TRUE
+		{
+			ALARMTIME = 1;
+			CYCLETIME = 10;
+			APPMODE = appmode1;
+		};
+	};
+  
+};
