@@ -147,16 +147,16 @@ TASK(LightSensorTask)
 	GetResource(DC);
 
 	//On the line for two cycles
-	if(reflect < black && prevReflect <black)
+	if(reflect < black)
 	{
 		change_driving_command(PRIO_LIGHT+1,50,100,3, dc.prevDir,LOST_RESET);//line is found, go straight
 	}
 	//Is lost
-	else if(dc.lost>=lost_chances)//car is lost if it changes direction X times without finding line
+	else//car is lost if it changes direction X times without finding line
 	{
-		change_driving_command(PRIO_LIGHT,50,1000*(dc.lost-lost_chances),(dc.dir+1)%2,(dc.dir+1)%2,dc.lost+1);
+		change_driving_command(PRIO_LIGHT,50,150,RIGHT,RIGHT,dc.lost+1);
 	}
-	//Is white was black was going left
+	/*//Is white was black was going left
 	else if((reflect >= black) && dc.prevDir ==LEFT) 
 	{
 		change_driving_command(PRIO_LIGHT,50,150,RIGHT,RIGHT,dc.lost+1);//set status to lost
@@ -170,7 +170,7 @@ TASK(LightSensorTask)
 	{
 		//change_driving_command(PRIO_LIGHT,50,100,4, dc.prevDir,0);//go straight, show error 4
 		change_driving_command(PRIO_LIGHT-1,dc.speed,dc.duration+10,dc.dir, dc.prevDir,dc.lost);
-	}
+	}*/
 	
 	ReleaseResource(DC);
 		
